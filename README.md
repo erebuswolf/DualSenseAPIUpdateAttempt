@@ -1,4 +1,4 @@
-# DualSenseAPI
+# DualSenseAPI (now with hardware accelerated Vectors)
 
 ![docs workflow status](https://github.com/BadMagic100/DualSenseAPI/actions/workflows/github-pages.yml/badge.svg)
 ![nuget version](https://img.shields.io/nuget/v/DualSenseAPI)
