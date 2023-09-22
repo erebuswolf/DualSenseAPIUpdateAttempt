@@ -147,11 +147,11 @@ namespace DualSenseAPI.State
         /// <param name="x">The x byte.</param>
         /// <param name="y">The y byte.</param>
         /// <returns>A vector for the joystick input.</returns>
-        private Vec2 ReadAnalogStick(byte x, byte y, float deadZone)
+        private System.Numerics.Vector2 ReadAnalogStick(byte x, byte y, float deadZone)
         {
             float x1 = x.ToSignedFloat();
             float y1 = -y.ToSignedFloat();
-            return new Vec2
+            return new System.Numerics.Vector2
             {
                 X = Math.Abs(x1) >= deadZone ? x1 : 0,
                 Y = Math.Abs(y1) >= deadZone ? y1 : 0
@@ -201,7 +201,7 @@ namespace DualSenseAPI.State
         /// <param name="y">The Y axis bytes.</param>
         /// <param name="z">The Z axis bytes.</param>
         /// <returns>A vector for the gyro axes.</returns>
-        private static Vec3 ReadAccelAxes(byte[] x, byte[] y, byte[] z)
+        private static System.Numerics.Vector3 ReadAccelAxes(byte[] x, byte[] y, byte[] z)
         {
             // force everything into the right byte order; assuming that input bytes is little-endian
             if (!BitConverter.IsLittleEndian)
@@ -210,7 +210,7 @@ namespace DualSenseAPI.State
                 y = y.Reverse().ToArray();
                 z = z.Reverse().ToArray();
             }
-            return new Vec3
+            return new System.Numerics.Vector3
             {
                 X = -BitConverter.ToInt16(x),
                 Y = BitConverter.ToInt16(y),
@@ -221,12 +221,12 @@ namespace DualSenseAPI.State
         /// <summary>
         /// The left analog stick. Values are from -1 to 1. Positive X is right, positive Y is up.
         /// </summary>
-        public Vec2 LeftAnalogStick { get; private set; }
+        public System.Numerics.Vector2 LeftAnalogStick { get; private set; }
 
         /// <summary>
         /// The right analog stick. Values are from -1 to 1. Positive X is right, positive Y is up.
         /// </summary>
-        public Vec2 RightAnalogStick { get; private set; }
+        public System.Numerics.Vector2 RightAnalogStick { get; private set; }
 
         /// <summary>
         /// L2's analog value, from 0 to 1.
@@ -349,7 +349,7 @@ namespace DualSenseAPI.State
         /// <see cref="Accelerometer"/>'s axes, e.g. +X rotation means counterclockwise around the +X axis and so on. Unit is unclear, but
         /// magnitude while stationary is about 0.
         /// </summary>
-        public Vec3 Gyro { get; private set; }
+        public System.Numerics.Vector3 Gyro { get; private set; }
 
         /// <summary>
         /// The accelerometer's linear axes. The directions of the axes have been slightly adjusted from the controller's original values
@@ -357,7 +357,7 @@ namespace DualSenseAPI.State
         /// if the controller is flat on the table). +Z is at the top of the controller (where the USB port is). Unit is unclear, but magnitude
         /// while stationary (e.g. just gravity) is about 8000 +- 100.
         /// </summary>
-        public Vec3 Accelerometer { get; private set; }
+        public System.Numerics.Vector3 Accelerometer { get; private set; }
 
         /// <summary>
         /// The status of the battery.
