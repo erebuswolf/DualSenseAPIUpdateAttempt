@@ -64,52 +64,56 @@ namespace Demo
             int wheelPos = 0;
 
             SetInitialProperties(ds);
-            DualSenseInputState dss;
-            DualSenseOutputState dso;
+            DualSenseInputState dss = null;
+            DualSenseOutputState dso = null;
             do {
-                dss = ds.ReadWriteOnce();
-                dso = ds.OutputState;
+                try {
+
+                    dss = ds.ReadWriteOnce();
+                    dso = ds.OutputState;
                 
 
-                if (!prevState.MicButton && dss.MicButton)
-                {
-                  /*  dso.MicLed = dso.MicLed switch
+                    if (!prevState.MicButton && dss.MicButton)
                     {
-                        MicLed.Off => MicLed.Pulse,
-                        MicLed.Pulse => MicLed.On,
-                        _ => MicLed.Off
-                    };*/
-                }
+                      /*  dso.MicLed = dso.MicLed switch
+                        {
+                            MicLed.Off => MicLed.Pulse,
+                            MicLed.Pulse => MicLed.On,
+                            _ => MicLed.Off
+                        };*/
+                    }
 
-                if (!prevState.R1Button && dss.R1Button) {
-                    /*
-                dso.PlayerLed = dso.PlayerLed switch
-                {
-                    PlayerLed.None => PlayerLed.Player1,
-                    PlayerLed.Player1 => PlayerLed.Player2,
-                    PlayerLed.Player2 => PlayerLed.Player3,
-                    PlayerLed.Player3 => PlayerLed.Player4,
-                    PlayerLed.Player4 => PlayerLed.All,
-                    _ => PlayerLed.None
-                };
-                    */
-                }
-
-                if (!prevState.L1Button && dss.L1Button)
-                {
-                    /*
-                    dso.PlayerLedBrightness = dso.PlayerLedBrightness switch
+                    if (!prevState.R1Button && dss.R1Button) {
+                        /*
+                    dso.PlayerLed = dso.PlayerLed switch
                     {
-                        PlayerLedBrightness.High => PlayerLedBrightness.Low,
-                        PlayerLedBrightness.Low => PlayerLedBrightness.Medium,
-                        _ => PlayerLedBrightness.High
+                        PlayerLed.None => PlayerLed.Player1,
+                        PlayerLed.Player1 => PlayerLed.Player2,
+                        PlayerLed.Player2 => PlayerLed.Player3,
+                        PlayerLed.Player3 => PlayerLed.Player4,
+                        PlayerLed.Player4 => PlayerLed.All,
+                        _ => PlayerLed.None
                     };
-                    */
+                        */
+                    }
+
+                    if (!prevState.L1Button && dss.L1Button)
+                    {
+                        /*
+                        dso.PlayerLedBrightness = dso.PlayerLedBrightness switch
+                        {
+                            PlayerLedBrightness.High => PlayerLedBrightness.Low,
+                            PlayerLedBrightness.Low => PlayerLedBrightness.Medium,
+                            _ => PlayerLedBrightness.High
+                        };
+                        */
+                    }
+
+                    wheelPos = ProcessStateLogic(dss, ds.OutputState, wheelPos);
+                    prevState = dss;
+
+                } catch (Exception err) {
                 }
-
-                wheelPos = ProcessStateLogic(dss, ds.OutputState, wheelPos);
-                prevState = dss;
-
                 Thread.Sleep(20);
                 
             } while (!dss.LogoButton);
