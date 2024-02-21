@@ -114,26 +114,28 @@ namespace DualSenseAPI
 
         private async Task<DualSenseInputState> ReadWriteOnceAsync()
         {
-            TransferResult result = await underlyingDevice.WriteAndReadAsync(GetOutputDataBytes());
-            if (result.BytesTransferred == readBufferSize)
-            {
-                // this can effectively determine which input packet you've recieved, USB or bluetooth, and offset by the right amount
+            try {
+                TransferResult result = await underlyingDevice.WriteAndReadAsync(GetOutputDataBytes());
+                if (result.BytesTransferred == readBufferSize) {
+                    // this can effectively determine which input packet you've recieved, USB or bluetooth, and offset by the right amount
 
-                int offset = 0;
-                switch (result.Data[0]) {
-                    case 0x01:
-                        offset = 1; // USB packet flag
-                        break;
-                    case 0x31:
-                        offset = 2; // Bluetooth packet flag
-                        break;
-                } 
-                return new DualSenseInputState(result.Data.Skip(offset).ToArray(), IoMode, JoystickDeadZone);
+                    int offset = 0;
+                    switch (result.Data[0]) {
+                        case 0x01:
+                            offset = 1; // USB packet flag
+                            break;
+                        case 0x31:
+                            offset = 2; // Bluetooth packet flag
+                            break;
+                    }
+                    return new DualSenseInputState(result.Data.Skip(offset).ToArray(), IoMode, JoystickDeadZone);
+                } else {
+                    throw new IOException("Failed to read data - buffer size mismatch");
+                }
+            } catch(Exception e) {
+                return null;
             }
-            else
-            {
-                throw new IOException("Failed to read data - buffer size mismatch");
-            }
+          
         }
 
         /// <summary>
@@ -185,7 +187,8 @@ namespace DualSenseAPI
         {
             if (pollerSubscription != null)
             {
-                throw new InvalidOperationException("Can't begin polling after it's already started.");
+                return;
+             //   throw new InvalidOperationException("Can't begin polling after it's already started.");
             }
 
             IObservable<DualSenseInputState> stateObserver = Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(pollingIntervalMs))
@@ -204,7 +207,8 @@ namespace DualSenseAPI
         {
             if (pollerSubscription == null)
             {
-                throw new InvalidOperationException("Can't end polling without starting polling first");
+                return;
+               // throw new InvalidOperationException("Can't end polling without starting polling first");
             }
             pollerSubscription.Dispose();
             pollerSubscription = null;
