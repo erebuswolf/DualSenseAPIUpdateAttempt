@@ -66,48 +66,52 @@ namespace Demo
             SetInitialProperties(ds);
             DualSenseInputState dss;
             DualSenseOutputState dso;
-            do
-            {
+            do {
                 dss = ds.ReadWriteOnce();
                 dso = ds.OutputState;
+                
 
                 if (!prevState.MicButton && dss.MicButton)
                 {
-                    dso.MicLed = dso.MicLed switch
+                  /*  dso.MicLed = dso.MicLed switch
                     {
                         MicLed.Off => MicLed.Pulse,
                         MicLed.Pulse => MicLed.On,
                         _ => MicLed.Off
-                    };
+                    };*/
                 }
 
-                if (!prevState.R1Button && dss.R1Button)
+                if (!prevState.R1Button && dss.R1Button) {
+                    /*
+                dso.PlayerLed = dso.PlayerLed switch
                 {
-                    dso.PlayerLed = dso.PlayerLed switch
-                    {
-                        PlayerLed.None => PlayerLed.Player1,
-                        PlayerLed.Player1 => PlayerLed.Player2,
-                        PlayerLed.Player2 => PlayerLed.Player3,
-                        PlayerLed.Player3 => PlayerLed.Player4,
-                        PlayerLed.Player4 => PlayerLed.All,
-                        _ => PlayerLed.None
-                    };
+                    PlayerLed.None => PlayerLed.Player1,
+                    PlayerLed.Player1 => PlayerLed.Player2,
+                    PlayerLed.Player2 => PlayerLed.Player3,
+                    PlayerLed.Player3 => PlayerLed.Player4,
+                    PlayerLed.Player4 => PlayerLed.All,
+                    _ => PlayerLed.None
+                };
+                    */
                 }
 
                 if (!prevState.L1Button && dss.L1Button)
                 {
+                    /*
                     dso.PlayerLedBrightness = dso.PlayerLedBrightness switch
                     {
                         PlayerLedBrightness.High => PlayerLedBrightness.Low,
                         PlayerLedBrightness.Low => PlayerLedBrightness.Medium,
                         _ => PlayerLedBrightness.High
                     };
+                    */
                 }
 
                 wheelPos = ProcessStateLogic(dss, ds.OutputState, wheelPos);
                 prevState = dss;
 
                 Thread.Sleep(20);
+                
             } while (!dss.LogoButton);
             ResetToDefaultState(ds);
             ds.Release();
@@ -124,6 +128,7 @@ namespace Demo
             };
             ds.OnButtonStateChanged += (sender, delta) =>
             {
+                /*
                 DualSenseOutputState dso = sender.OutputState;
                 if (delta.MicButton == ButtonDeltaState.Pressed)
                 {
@@ -157,6 +162,7 @@ namespace Demo
                         _ => PlayerLedBrightness.High
                     };
                 }
+                */
                 Console.WriteLine("Change event fired");
             };
 
@@ -244,10 +250,11 @@ namespace Demo
         {
             IEnumerable<string> pressedButtons = dss.GetType().GetProperties()
                 .Where(p => p.Name.EndsWith("Button") && p.PropertyType == typeof(bool))
-                .Where(p => (bool)p.GetValue(dss)!)
+                .Where(p => (bool)p.GetValue(dss))
                 .Select(p => p.Name.Replace("Button", ""));
             string joined = string.Join(", ", pressedButtons);
             Console.WriteLine($"Buttons: {joined}");
+
         }
     }
 }

@@ -13,7 +13,9 @@ namespace DualSenseAPI.Util
     {
         private readonly IDeviceFactory hidFactory;
 
-        private static HidScanner? _instance = null;
+        private static HidScanner _instance = null;
+        // private static HidScanner? _instance = null;
+
         /// <summary>
         /// Singleton HidScanner instance.
         /// </summary>

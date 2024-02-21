@@ -119,9 +119,11 @@ namespace DualSenseAPI.State
             // since reflection can be a bit heavy, we'll incur this burden only once at startup so we can get the necessary property info for comparison
 
             PropertyInfo[] deltaProperties = typeof(DualSenseInputStateButtonDelta).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-            propertyPairData = deltaProperties
+      // TODO: Double check This
+                propertyPairData = deltaProperties
                 .Where(x => x.PropertyType == typeof(ButtonDeltaState))
-                .Select(x => (x, typeof(DualSenseInputState).GetProperty(x.Name)!)).ToList();
+                .Select(x => (x, typeof(DualSenseInputState).GetProperty(x.Name))).ToList();
+
         }
 
         /// <summary>

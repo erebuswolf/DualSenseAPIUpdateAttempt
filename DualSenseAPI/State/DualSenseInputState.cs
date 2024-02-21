@@ -184,7 +184,7 @@ namespace DualSenseAPI.State
             {
                 bytes = bytes.Reverse().ToArray();
             }
-            uint raw = BitConverter.ToUInt32(bytes);
+            uint raw = BitConverter.ToUInt32(bytes, 0);
             return new Touch
             {
                 X = (raw & 0x000FFF00) >> 8,
@@ -212,9 +212,9 @@ namespace DualSenseAPI.State
             }
             return new System.Numerics.Vector3
             {
-                X = -BitConverter.ToInt16(x),
-                Y = BitConverter.ToInt16(y),
-                Z = BitConverter.ToInt16(z)
+                X = -BitConverter.ToInt16(x, 0),
+                Y = BitConverter.ToInt16(y, 0),
+                Z = BitConverter.ToInt16(z, 0)
             };
         }
 

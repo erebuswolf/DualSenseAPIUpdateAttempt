@@ -45,7 +45,12 @@ namespace DualSenseAPI.Util
         /// <returns>The float, clamped and scaled between 0 and 255.</returns>
         public static byte UnsignedToByte(this float f)
         {
-            return (byte)(Math.Clamp(f, 0, 1) * 255);
+            return (byte)(Clamp(f, 0, 1) * 255);
+        }
+        public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T> {
+            if (val.CompareTo(min) < 0) return min;
+            else if (val.CompareTo(max) > 0) return max;
+            else return val;
         }
     }
 }

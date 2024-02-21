@@ -21,21 +21,24 @@ namespace DualSenseAPI
         private readonly int? writeBufferSize;
 
         // async polling
-        private IDisposable? pollerSubscription;
+        private IDisposable pollerSubscription;
+       // private IDisposable? pollerSubscription;
 
         /// <summary>
         /// State event handler for asynchronous polling.
         /// </summary>
         /// <seealso cref="BeginPolling(uint)"/>
         /// <seealso cref="EndPolling"/>
-        public event StatePolledHandler? OnStatePolled;
+        public event StatePolledHandler OnStatePolled;
+        // public event StatePolledHandler? OnStatePolled;
 
         /// <summary>
         /// Button state changed event handler for asynchronous polling.
         /// </summary>
         /// <seealso cref="BeginPolling(uint)"/>
         /// <seealso cref="EndPolling"/>
-        public event ButtonStateChangedHandler? OnButtonStateChanged;
+        public event ButtonStateChangedHandler OnButtonStateChanged;
+        // public event ButtonStateChangedHandler? OnButtonStateChanged;
 
         /// <summary>
         /// The I/O mode the controller is connected by.
@@ -69,12 +72,18 @@ namespace DualSenseAPI
             this.underlyingDevice = underlyingDevice;
             this.readBufferSize = readBufferSize;
             this.writeBufferSize = writeBufferSize;
-            IoMode = readBufferSize switch
-            {
-                64 => IoMode.USB,
-                78 => IoMode.Bluetooth,
-                _ => IoMode.Unknown
-            };
+            switch (readBufferSize) {
+                case 64:
+                    IoMode = IoMode.USB;
+                    break;
+                case 78:
+                    IoMode = IoMode.Bluetooth;
+                    break;
+                default:
+                    IoMode = IoMode.Unknown;
+                    break;
+            }
+
             if (IoMode == IoMode.Unknown)
             {
                 throw new InvalidOperationException("Can't initialize device - supported IO modes are USB and Bluetooth.");
@@ -109,12 +118,16 @@ namespace DualSenseAPI
             if (result.BytesTransferred == readBufferSize)
             {
                 // this can effectively determine which input packet you've recieved, USB or bluetooth, and offset by the right amount
-                int offset = result.Data[0] switch
-                {
-                    0x01 => 1, // USB packet flag
-                    0x31 => 2, // Bluetooth packet flag
-                    _ => 0
-                };
+
+                int offset = 0;
+                switch (result.Data[0]) {
+                    case 0x01:
+                        offset = 1; // USB packet flag
+                        break;
+                    case 0x31:
+                        offset = 2; // Bluetooth packet flag
+                        break;
+                } 
                 return new DualSenseInputState(result.Data.Skip(offset).ToArray(), IoMode, JoystickDeadZone);
             }
             else
